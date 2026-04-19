@@ -19,7 +19,6 @@
             color: var(--text-color);
             line-height: 1.6;
             margin: 0; padding: 0;
-            overflow-x: hidden;
         }
         .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
         header { text-align: center; margin-bottom: 50px; }
@@ -54,36 +53,45 @@
         }
         .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
 
-        /* 游戏区域 */
-        #game-board {
+        /* 贪吃蛇游戏区域 */
+        #game-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+        canvas {
+            background-color: #050505;
+            display: block;
+            margin: 0 auto;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            max-width: 100%;
+        }
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+            font-family: monospace;
+            color: var(--success-color);
+        }
+        .controls {
             display: grid;
-            gap: 2px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 180px;
             margin: 20px auto;
-            background: #333;
-            border: 4px solid #444;
-            width: fit-content;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .tile {
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; background: #0d1117;
+        .controls button {
+            padding: 15px;
+            background: var(--border-color);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
         }
-        .wall { background: #30363d; }
-        .target { background: #163020; box-shadow: inset 0 0 5px var(--success-color); }
+        .controls button:active { background: var(--accent-color); }
         
-        .btn-group { display: flex; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        button {
-            padding: 10px 18px; border: none; border-radius: 6px;
-            background: var(--accent-color); color: white; cursor: pointer; font-weight: bold;
-            transition: opacity 0.2s;
-        }
-        button.dir { background: #30363d; width: 50px; height: 50px; font-size: 20px; }
-        button:hover { opacity: 0.8; }
-        
-        footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
         code { background: #21262d; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: var(--accent-color); }
-        img { max-width: 100%; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -103,34 +111,30 @@
         <h2>Key Project</h2>
         <div class="feature-card">
             <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank">QQ Quick Update</a></h3>
-            <p>基于 Nuitka 混淆打包的自动化加速工具。支持多环境一键发布及极致的单文件体验。</p>
+            <p>基于 Nuitka 混淆打包的自动化加速工具。实现源码自动混淆、多环境发布与 <code>--onefile</code> 打包。</p>
         </div>
     </div>
 
     <div class="section">
-        <h2>Playground: Nuitka Sokoban</h2>
-        <p>将 <b>源码包 (📦)</b> 推到 <b>编译器入口 (🎯)</b>：</p>
+        <h2>Playground: Nuitka Snake</h2>
+        <p>吃掉掉落的 <b>依赖包 (📦)</b> 来完成编译增长：</p>
         
-        <div id="game-board"></div>
-        
-        <div class="btn-group">
-            <button onclick="generateRandomLevel()">生成新关卡 (2-3个源码包)</button>
-        </div>
-
-        <div style="margin-top: 15px;">
-            <div class="btn-group"><button class="dir" onclick="move('w')">↑</button></div>
-            <div class="btn-group">
-                <button class="dir" onclick="move('a')">←</button>
-                <button class="dir" onclick="move('s')">↓</button>
-                <button class="dir" onclick="move('d')">→</button>
+        <div id="game-area">
+            <div class="game-info">
+                <span>Score: <id id="score">0</id></span>
+                <span>Best: <id id="best">0</id></span>
             </div>
+            <canvas id="snakeGame" width="400" height="400"></canvas>
+            
+            <div class="controls">
+                <div></div><button onclick="changeDir('up')">↑</button><div></div>
+                <button onclick="changeDir('left')">←</button>
+                <button onclick="changeDir('down')">↓</button>
+                <button onclick="changeDir('right')">→</button>
+            </div>
+            
+            <button onclick="resetGame()" style="margin-top: 10px; background: var(--success-color); padding: 10px 20px; border:none; border-radius:5px; color:white; cursor:pointer;">Restart Build</button>
         </div>
-        <p id="game-msg" style="margin-top:15px; font-family:monospace; min-height: 1.5em; text-align:center;"></p>
-    </div>
-
-    <div class="section">
-        <h2>GitHub Activity</h2>
-        <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="Stats">
     </div>
 
     <footer>
@@ -139,133 +143,122 @@
 </div>
 
 <script>
-    const ROWS = 8, COLS = 8;
-    let map = [];
-    let player = {x: 0, y: 0};
-    let targets = [];
+    const canvas = document.getElementById("snakeGame");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
 
-    function generateRandomLevel() {
-        document.getElementById('game-msg').innerText = ">$ nuitka --generate-level ...";
-        document.getElementById('game-msg').style.color = "var(--text-color)";
-        
-        // 初始化地图：四周包墙
-        map = Array.from({length: ROWS}, (_, y) => 
-            Array.from({length: COLS}, (_, x) => (x===0 || x===COLS-1 || y===0 || y===ROWS-1) ? 1 : 0)
-        );
+    const box = 20;
+    let score = 0;
+    let bestScore = localStorage.getItem("fatcat-best") || 0;
+    bestEl.innerText = bestScore;
 
-        // 随机放置 2-3 个目标点和箱子 (初始为完成态)
-        targets = [];
-        let numBoxes = Math.floor(Math.random() * 2) + 2; // 随机 2 或 3
-        let count = 0;
-        while(count < numBoxes) {
-            let rx = Math.floor(Math.random()*(COLS-2))+1;
-            let ry = Math.floor(Math.random()*(ROWS-2))+1;
-            if(map[ry][rx] === 0) {
-                map[ry][rx] = 5; // 箱子在目标上
-                targets.push({x: rx, y: ry});
-                count++;
-            }
-        }
+    let snake = [{ x: 10 * box, y: 10 * box }];
+    let food = {
+        x: Math.floor(Math.random() * 19 + 1) * box,
+        y: Math.floor(Math.random() * 19 + 1) * box
+    };
+    let d = "right";
+    let game;
 
-        // 放置玩家初始位置
-        do {
-            player.x = Math.floor(Math.random()*(COLS-2))+1;
-            player.y = Math.floor(Math.random()*(ROWS-2))+1;
-        } while(map[player.y][player.x] !== 0);
-        map[player.y][player.x] = 4;
-
-        // 逆向拉动算法 (Shuffle)
-        for(let i=0; i<150; i++) {
-            const dirs = [{dx:0,dy:1},{dx:0,dy:-1},{dx:1,dy:0},{dx:-1,dy:0}];
-            const d = dirs[Math.floor(Math.random()*4)];
-            let nx = player.x + d.dx, ny = player.y + d.dy;     // 移动位
-            let bx = player.x - d.dx, by = player.y - d.dy;     // 身后位
-            let bbx = player.x - 2*d.dx, bby = player.y - 2*d.dy; // 终点位
-
-            // 逆向拉动逻辑
-            if(isInside(bx, by) && (map[by][bx] === 3 || map[by][bx] === 5)) {
-                if(isInside(bbx, bby) && map[bby][bbx] === 0) {
-                    map[by][bx] = isT(bx, by) ? 2 : 0;
-                    map[bby][bbx] = isT(bbx, bby) ? 5 : 3;
-                }
-            }
-            // 玩家游走
-            if(isInside(nx, ny) && map[ny][nx] !== 1) {
-                map[player.y][player.x] = isT(player.x, player.y) ? 2 : 0;
-                player = {x: nx, y: ny};
-                map[player.y][player.x] = 4;
-            }
-        }
-        render();
+    // 控制逻辑
+    document.addEventListener("keydown", direction);
+    function direction(event) {
+        if(event.keyCode == 37 && d != "right") d = "left";
+        else if(event.keyCode == 38 && d != "down") d = "up";
+        else if(event.keyCode == 39 && d != "left") d = "right";
+        else if(event.keyCode == 40 && d != "up") d = "down";
     }
 
-    function isInside(x, y) { return x>0 && x<COLS-1 && y>0 && y<ROWS-1; }
-    function isT(x, y) { return targets.some(t => t.x === x && t.y === y); }
-
-    function render() {
-        const board = document.getElementById('game-board');
-        board.innerHTML = '';
-        board.style.gridTemplateColumns = `repeat(${COLS}, 40px)`;
-        for(let y=0; y<ROWS; y++) {
-            for(let x=0; x<COLS; x++) {
-                const tile = document.createElement('div');
-                tile.className = 'tile';
-                const v = map[y][x];
-                if(v === 1) tile.classList.add('wall');
-                if(isT(x, y)) tile.classList.add('target');
-                if(v === 4) { tile.innerText = '🐱'; player = {x, y}; }
-                else if(v === 3) tile.innerText = '📦';
-                else if(v === 5) { tile.innerText = '✅'; tile.classList.add('target'); }
-                else if(isT(x, y) && v === 0) tile.innerText = '🎯';
-                board.appendChild(tile);
-            }
-        }
-        if(!map.some(row => row.includes(3))) {
-            document.getElementById('game-msg').innerText = "BUILD SUCCESS! ✓ Binary Generated.";
-            document.getElementById('game-msg').style.color = "var(--success-color)";
-        }
+    function changeDir(newDir) {
+        if(newDir == "left" && d != "right") d = "left";
+        if(newDir == "up" && d != "down") d = "up";
+        if(newDir == "right" && d != "left") d = "right";
+        if(newDir == "down" && d != "up") d = "down";
     }
 
-    function move(dir) {
-        let dx = 0, dy = 0;
-        if(dir === 'w') dy = -1; else if(dir === 's') dy = 1;
-        else if(dir === 'a') dx = -1; else if(dir === 'd') dx = 1;
-        let nx = player.x + dx, ny = player.y + dy;
-        let nnx = nx + dx, nny = ny + dy;
+    function draw() {
+        ctx.fillStyle = "#050505";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if(map[ny][nx] === 1) return;
-        if(map[ny][nx] === 0 || map[ny][nx] === 2) {
-            map[player.y][player.x] = isT(player.x, player.y) ? 2 : 0;
-            map[ny][nx] = 4;
-            player = {x: nx, y: ny};
-        } else if(map[ny][nx] === 3 || map[ny][nx] === 5) {
-            if(map[nny][nnx] === 0 || map[nny][nnx] === 2) {
-                map[nny][nnx] = isT(nnx, nny) ? 5 : 3;
-                map[ny][nx] = 4;
-                map[player.y][player.x] = isT(player.x, player.y) ? 2 : 0;
-                player = {x: nx, y: ny};
-            }
+        // 画蛇
+        for (let i = 0; i < snake.length; i++) {
+            ctx.fillStyle = i == 0 ? "#58a6ff" : "#238636";
+            ctx.fillRect(snake[i].x, snake[i].y, box, box);
+            ctx.strokeStyle = "#0d1117";
+            ctx.strokeRect(snake[i].x, snake[i].y, box, box);
         }
-        render();
+
+        // 画依赖包
+        ctx.font = "16px Arial";
+        ctx.fillText("📦", food.x + 2, food.y + 15);
+
+        let snakeX = snake[0].x;
+        let snakeY = snake[0].y;
+
+        if (d == "left") snakeX -= box;
+        if (d == "up") snakeY -= box;
+        if (d == "right") snakeX += box;
+        if (d == "down") snakeY += box;
+
+        // 吃到依赖包
+        if (snakeX == food.x && snakeY == food.y) {
+            score++;
+            scoreEl.innerText = score;
+            food = {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            };
+        } else {
+            snake.pop();
+        }
+
+        let newHead = { x: snakeX, y: snakeY };
+
+        // 死亡判定
+        if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+            clearInterval(game);
+            if(score > bestScore) {
+                localStorage.setItem("fatcat-best", score);
+                bestEl.innerText = score;
+            }
+            alert("Build Failed: Segmentation Fault. 最终代码长度: " + score);
+        }
+
+        snake.unshift(newHead);
     }
 
-    document.addEventListener('keydown', e => {
-        const k = { 'ArrowUp':'w','ArrowDown':'s','ArrowLeft':'a','ArrowRight':'d','w':'w','a':'a','s':'s','d':'d' };
-        if(k[e.key]) { e.preventDefault(); move(k[e.key]); }
-    });
+    function collision(head, array) {
+        for (let i = 0; i < array.length; i++) {
+            if (head.x == array[i].x && head.y == array[i].y) return true;
+        }
+        return false;
+    }
+
+    function resetGame() {
+        clearInterval(game);
+        score = 0;
+        scoreEl.innerText = 0;
+        snake = [{ x: 10 * box, y: 10 * box }];
+        d = "right";
+        game = setInterval(draw, 100);
+    }
+
+    function startGame() {
+        game = setInterval(draw, 100);
+    }
 
     // --- 控制台彩蛋 ---
-    console.log("%c FatCat OS ", "color: white; background: #58a6ff; font-weight: bold; border-radius: 3px; padding: 2px 5px;");
-    console.log("Checking for icon.ico... [FOUND]");
-    console.log("Running Nuitka with --onefile and --mingw64...");
-    console.log("%cHint: Use 'generateRandomLevel()' in console to force a re-compile!", "color: #8b949e; font-style: italic;");
+    console.log("%c FatCat Debugger ", "color: white; background: #238636; font-weight: bold;");
+    console.log("Nuitka Snake Engine ... [READY]");
+    console.log("Hint: Eat '📦' to increase compilation size.");
 
     const statusText = document.getElementById('status-text');
-    const logs = ["Compiling C source...", "Linking libraries...", "Packing --onefile...", "Done."];
+    const logs = ["Analyzing...", "Linking...", "Build Successful ✓"];
     let lIdx = 0;
-    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 2500);
+    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 3000);
 
-    generateRandomLevel();
+    startGame();
 </script>
 
 </body>
