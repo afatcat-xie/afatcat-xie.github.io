@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FatCat | Python Developer Portfolio</title>
+    <title>FatCat | Python 开发者主页</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -18,6 +18,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             background-color: var(--bg-color); color: var(--text-color);
             line-height: 1.6; margin: 0; padding: 0; transition: background 0.5s;
+            overflow-x: hidden;
         }
         .container { max-width: 850px; margin: 0 auto; padding: 40px 20px; }
         header { text-align: center; margin-bottom: 50px; }
@@ -49,13 +50,13 @@
             margin-bottom: 10px; font-family: 'Fira Code', monospace; color: var(--success-color);
         }
 
-        /* God Mode 激活样式 */
+        /* 无敌模式 (God Mode) 样式 */
         .god-mode canvas { border-color: var(--god-color); box-shadow: 0 0 35px rgba(241, 196, 15, 0.4); }
         .god-mode h1, .god-mode h2 { color: var(--god-color) !important; border-color: var(--god-color); }
         .god-mode .section { border-color: var(--god-color); transform: scale(1.01); }
 
         .btn-action {
-            display: inline-block; margin-top: 15px; padding: 10px 20px;
+            display: inline-block; margin-top: 15px; padding: 10px 25px;
             background: var(--border-color); color: white; border: none;
             border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
@@ -69,7 +70,7 @@
         .project-link:hover { background: rgba(255, 255, 255, 0.05); }
 
         footer { text-align: center; margin-top: 60px; font-size: 0.85em; opacity: 0.5; padding-bottom: 40px; }
-        code { background: #21262d; padding: 3px 6px; border-radius: 4px; color: var(--accent-color); }
+        code { background: #21262d; padding: 3px 6px; border-radius: 4px; color: var(--accent-color); font-family: monospace; }
         .github-stats { width: 100%; border-radius: 8px; margin-top: 15px; }
     </style>
 </head>
@@ -78,34 +79,34 @@
 <div class="container">
     <header>
         <h1 id="main-title">FatCat 🐱</h1>
-        <p class="tagline">Pythonic Automation & Cross-Platform Developer</p>
+        <p class="tagline">Python 自动化与跨平台开发专家</p>
     </header>
 
     <div class="section">
-        <h2>About Me</h2>
-        <p>专注于 <b>Windows</b> 桌面端应用与 <b>Android Termux</b> 环境下的自动化开发。精通 Python 闭源打包（Nuitka/Cython）与跨平台框架（BeeWare/Kivy），致力于构建极致精简、高性能的独立执行程序。</p>
+        <h2>关于我</h2>
+        <p>专注于 <b>Windows</b> 桌面应用与 <b>Android Termux</b> 环境下的自动化开发。精通 Python 闭源打包技术（Nuitka/Cython）与跨平台框架（BeeWare/Kivy），致力于构建极致精简、高性能的独立执行程序。</p>
         <div style="margin-top: 15px;">
-            <span class="skill-tag">Python Build Systems</span>
+            <span class="skill-tag">Python 构建系统</span>
             <span class="skill-tag">GitHub Actions CI/CD</span>
-            <span class="skill-tag">Binary Obfuscation</span>
-            <span class="skill-tag">System Automation</span>
+            <span class="skill-tag">二进制混淆技术</span>
+            <span class="skill-tag">系统自动化控制</span>
         </div>
     </div>
 
     <div class="section">
-        <h2>Playground: Nuitka Snake</h2>
+        <h2>在线演示：Nuitka 编译挑战</h2>
         <div id="game-board">
             <div class="game-stats">
-                <span>Modules Compiled: <span id="score">0</span></span>
-                <span>Stable Release: <span id="best">0</span></span>
+                <span>已编译模块: <span id="score">0</span></span>
+                <span>最高稳定版本: <span id="best">0</span></span>
             </div>
             <canvas id="snakeGame" width="400" height="400"></canvas>
-            <button class="btn-action" onclick="resetGame()">Initialize New Build</button>
+            <button class="btn-action" onclick="resetGame()">重新初始化构建</button>
         </div>
     </div>
 
     <div class="section">
-        <h2>Key Projects</h2>
+        <h2>核心项目</h2>
         <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank" class="project-link">
             <h3 style="margin: 0; color: var(--accent-color);">🚀 QQ Quick Update</h3>
             <p style="margin: 10px 0 0 0;">集成 Nuitka 深度混淆与 GitHub Actions 的腾讯 QQ 自动化更新工具。实现单文件分发与跨版本环境自动适配。</p>
@@ -113,13 +114,13 @@
     </div>
 
     <div class="section">
-        <h2>OSS Metrics</h2>
-        <img class="github-stats" src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="FatCat GitHub Stats">
+        <h2>开源贡献</h2>
+        <img class="github-stats" src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="FatCat GitHub 统计">
     </div>
 
     <footer>
-        <p>© 2026 FatCat. All binaries compiled with precision.</p>
-        <p>Environment Status: <code id="status-text">Kernel Ready</code></p>
+        <p>© 2026 FatCat. 所有程序均经过严格二进制编译。</p>
+        <p>内核状态：<code id="status-text">系统就绪</code></p>
     </footer>
 </div>
 
@@ -143,24 +144,25 @@
     let isGodMode = false;
 
     // --- 极客彩蛋检测 (Konami Code) ---
+    // 上上下下左右左右BA
     const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     let konamiIndex = 0;
 
     document.addEventListener("keydown", (e) => {
-        // 屏蔽方向键导致的页面滚动
+        // 防止方向键滚动页面
         if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) e.preventDefault();
 
-        // 蛇方向控制
+        // 基础控制
         if(e.key == "ArrowLeft" && d != "right") d = "left";
         else if(e.key == "ArrowUp" && d != "down") d = "up";
         else if(e.key == "ArrowRight" && d != "left") d = "right";
         else if(e.key == "ArrowDown" && d != "up") d = "down";
 
-        // 秘籍检测逻辑
+        // 彩蛋检测逻辑
         if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase() || e.key === konamiCode[konamiIndex]) {
             konamiIndex++;
             if (konamiIndex === konamiCode.length) {
-                unlockGodMode();
+                activateGodMode();
                 konamiIndex = 0;
             }
         } else {
@@ -168,21 +170,21 @@
         }
     });
 
-    function unlockGodMode() {
+    function activateGodMode() {
         if(isGodMode) return;
         isGodMode = true;
         body.classList.add('god-mode');
-        statusText.innerText = "SUDO MODE ENABLED";
+        statusText.innerText = "超级用户模式 (SUDO)";
         console.clear();
-        console.log("%c [KERN] VULNERABILITY EXPLOITED: OVERFLOW BYPASS ACTIVE ", "background: #f1c40f; color: #000; font-weight: bold; font-size: 16px; padding: 10px;");
-        console.log("上帝模式开启：身体碰撞已解除，穿墙逻辑重定向完成。");
+        console.log("%c [系统] 权限提升成功：已绕过碰撞检测策略 ", "background: #f1c40f; color: #000; font-weight: bold; font-size: 16px; padding: 10px; border-radius: 5px;");
+        console.log("上帝模式开启：蛇身已金构化，支持空间重定向（穿墙）。");
     }
 
     function draw() {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 绘制蛇身
+        // 绘制蛇
         for (let i = 0; i < snake.length; i++) {
             ctx.fillStyle = isGodMode ? "#f1c40f" : (i == 0 ? "#58a6ff" : "#238636");
             ctx.fillRect(snake[i].x, snake[i].y, box, box);
@@ -202,7 +204,7 @@
         if (d == "right") sx += box;
         if (d == "down") sy += box;
 
-        // God Mode 穿墙逻辑
+        // 上帝模式：边缘重定向（穿墙）
         if (isGodMode) {
             if (sx < 0) sx = canvas.width - box;
             else if (sx >= canvas.width) sx = 0;
@@ -223,7 +225,7 @@
 
         let newHead = { x: sx, y: sy };
 
-        // 死亡判定（上帝模式下豁免）
+        // 死亡逻辑 (上帝模式下豁免)
         if (!isGodMode) {
             if (sx < 0 || sx >= canvas.width || sy < 0 || sy >= canvas.height || collision(newHead, snake)) {
                 clearInterval(gameInterval);
@@ -232,7 +234,7 @@
                     localStorage.setItem("fatcat-snake-best", bestScore);
                     bestEl.innerText = bestScore;
                 }
-                statusText.innerText = "Kernel Panic: Memory Violation";
+                statusText.innerText = "核心崩溃 (Kernel Panic): 内存访问冲突";
                 return;
             }
         }
@@ -251,16 +253,16 @@
         score = 0; scoreEl.innerText = "0";
         snake = [{ x: 10 * box, y: 10 * box }];
         d = "right";
-        statusText.innerText = isGodMode ? "SUDO MODE ENABLED" : "Kernel Ready";
+        statusText.innerText = isGodMode ? "超级用户模式" : "系统就绪";
         gameInterval = setInterval(draw, 100);
     }
 
-    // --- Console 隐藏线索 ---
-    console.log("%c FatCat Debug Console ", "color: white; background: #58a6ff; font-weight: bold; padding: 4px; border-radius: 3px;");
-    console.log("System version: 2.0.26-stable");
-    console.log("Looking for hidden backdoors...");
+    // --- 控制台隐藏引导 ---
+    console.log("%c FatCat 调试终端 ", "color: white; background: #58a6ff; font-weight: bold; padding: 4px; border-radius: 3px;");
+    console.log("检测到环境版本: 2.0.26-stable");
+    console.log("正在探测内核漏洞...");
     setTimeout(() => {
-        console.log("%c[INFO] 提示: 尝试输入经典的 Konami Code (↑↑↓↓←→←→BA) 来覆盖编译器安全策略限制。", "color: #8b949e; font-style: italic;");
+        console.log("%c[提示] 发现注入点：在页面尝试依次输入「上上下下左右左右BA」可强行覆盖编译安全限制。", "color: #8b949e; font-style: italic;");
     }, 3000);
 
     resetGame();
