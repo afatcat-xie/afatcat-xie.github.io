@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FatCat | 开发者主页</title>
+    <title>FatCat | 开发者主页 (God Mode Edition)</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -12,6 +12,7 @@
             --card-bg: #161b22;
             --border-color: #30363d;
             --success-color: #238636;
+            --god-color: #f1c40f; /* 金色：无敌模式专用 */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -19,10 +20,11 @@
             color: var(--text-color);
             line-height: 1.6;
             margin: 0; padding: 0;
+            overflow-x: hidden;
         }
         .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
         header { text-align: center; margin-bottom: 50px; }
-        h1 { color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px; }
+        h1 { color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px; transition: color 0.3s; }
         .tagline { font-style: italic; opacity: 0.8; }
         
         .section {
@@ -31,6 +33,7 @@
             border-radius: 10px;
             margin-bottom: 20px;
             border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
         h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; margin-top: 0; }
         
@@ -43,21 +46,17 @@
             font-size: 0.9em;
             margin: 5px;
         }
+
         .feature-card {
             margin-top: 15px;
             padding: 15px;
             border-left: 3px solid var(--accent-color);
             background: rgba(255, 255, 255, 0.03);
             border-radius: 0 8px 8px 0;
-            margin-bottom: 15px;
         }
-        .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
 
-        /* 贪吃蛇游戏区域 */
-        #game-area {
-            text-align: center;
-            margin: 20px 0;
-        }
+        /* 游戏区域样式 */
+        #game-area { text-align: center; position: relative; }
         canvas {
             background-color: #050505;
             display: block;
@@ -65,80 +64,98 @@
             border: 2px solid var(--border-color);
             border-radius: 8px;
             max-width: 100%;
+            transition: all 0.5s ease;
         }
         .game-info {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+        #cheat-status {
+            color: var(--god-color);
+            font-size: 0.9em;
+            height: 1.5em;
+            margin-bottom: 5px;
             font-family: monospace;
-            color: var(--success-color);
         }
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 180px;
-            margin: 20px auto;
+
+        /* 无敌模式激活时的样式 */
+        .god-mode canvas {
+            border-color: var(--god-color);
+            box-shadow: 0 0 25px rgba(241, 196, 15, 0.4);
         }
-        .controls button {
-            padding: 15px;
-            background: var(--border-color);
-            border: none;
+        .god-mode h1 { color: var(--god-color) !important; text-shadow: 0 0 10px var(--god-color); }
+
+        .btn-restart {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: var(--success-color);
             color: white;
-            border-radius: 8px;
+            border: none;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
         }
-        .controls button:active { background: var(--accent-color); }
-        
+        .btn-restart:hover { opacity: 0.9; }
+
         footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
         code { background: #21262d; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: var(--accent-color); }
+        img { max-width: 100%; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
-<body>
+<body id="body">
 
 <div class="container">
     <header>
-        <h1>FatCat 🐱</h1>
+        <h1 id="main-title">FatCat 🐱</h1>
         <p class="tagline">Python Developer | Automation Specialist</p>
     </header>
 
     <div class="section">
         <h2>About Me</h2>
-        <p>专注于 <b>Windows</b> 与 <b>Termux</b> 开发，擅长 Python 自动化构建及 Nuitka 闭源打包方案。</p>
+        <p>专注于 <b>Windows</b> 与 <b>Termux</b> 开发，擅长 Python 自动化构建及 Nuitka 闭源打包方案。热衷于在各种环境中实现极致的自动化流程。</p>
+        <div>
+            <span class="skill-tag">Python (BeeWare/Kivy)</span>
+            <span class="skill-tag">Nuitka & CI/CD</span>
+            <span class="skill-tag">Android Termux</span>
+            <span class="skill-tag">Shell Scripting</span>
+        </div>
+    </div>
+
+    <div class="section" id="game-section">
+        <h2>Playground: Nuitka Snake</h2>
+        <div id="game-area">
+            <div id="cheat-status"></div>
+            <div class="game-info">
+                <span>Score: <span id="score">0</span></span>
+                <span id="best-container">Best Score: <span id="best">0</span></span>
+            </div>
+            <canvas id="snakeGame" width="400" height="400"></canvas>
+            <button class="btn-restart" onclick="resetGame()">Restart Build</button>
+            <p style="font-size: 0.7em; opacity: 0.5; margin-top: 10px;">
+                秘籍: ↑↑↓↓←→←→BA 开启无敌编译模式
+            </p>
+        </div>
     </div>
 
     <div class="section">
         <h2>Key Project</h2>
         <div class="feature-card">
-            <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank">QQ Quick Update</a></h3>
-            <p>基于 Nuitka 混淆打包的自动化加速工具。实现源码自动混淆、多环境发布与 <code>--onefile</code> 打包。</p>
+            <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank" style="color:var(--accent-color); text-decoration:none;">QQ Quick Update</a></h3>
+            <p>基于 Nuitka 混淆打包的自动化工具。利用 GitHub Actions 实现云端自动编译、Release 分发及多平台兼容性优化。</p>
         </div>
     </div>
 
     <div class="section">
-        <h2>Playground: Nuitka Snake</h2>
-        <p>吃掉掉落的 <b>依赖包 (📦)</b> 来完成编译增长：</p>
-        
-        <div id="game-area">
-            <div class="game-info">
-                <span>Score: <id id="score">0</id></span>
-                <span>Best: <id id="best">0</id></span>
-            </div>
-            <canvas id="snakeGame" width="400" height="400"></canvas>
-            
-            <div class="controls">
-                <div></div><button onclick="changeDir('up')">↑</button><div></div>
-                <button onclick="changeDir('left')">←</button>
-                <button onclick="changeDir('down')">↓</button>
-                <button onclick="changeDir('right')">→</button>
-            </div>
-            
-            <button onclick="resetGame()" style="margin-top: 10px; background: var(--success-color); padding: 10px 20px; border:none; border-radius:5px; color:white; cursor:pointer;">Restart Build</button>
-        </div>
+        <h2>GitHub Activity</h2>
+        <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="Stats">
     </div>
 
     <footer>
-        <p>© 2026 FatCat. Build Status: <code id="status-text">Ready</code></p>
+        <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
+        <p>Build Status: <code id="status-text">Ready</code></p>
     </footer>
 </div>
 
@@ -147,10 +164,13 @@
     const ctx = canvas.getContext("2d");
     const scoreEl = document.getElementById("score");
     const bestEl = document.getElementById("best");
+    const statusText = document.getElementById('status-text');
+    const body = document.getElementById('body');
+    const cheatStatus = document.getElementById('cheat-status');
 
     const box = 20;
     let score = 0;
-    let bestScore = localStorage.getItem("fatcat-best") || 0;
+    let bestScore = localStorage.getItem("fatcat-snake-best") || 0;
     bestEl.innerText = bestScore;
 
     let snake = [{ x: 10 * box, y: 10 * box }];
@@ -159,22 +179,39 @@
         y: Math.floor(Math.random() * 19 + 1) * box
     };
     let d = "right";
-    let game;
+    let gameInterval;
+    let isGodMode = false;
 
-    // 控制逻辑
-    document.addEventListener("keydown", direction);
-    function direction(event) {
-        if(event.keyCode == 37 && d != "right") d = "left";
-        else if(event.keyCode == 38 && d != "down") d = "up";
-        else if(event.keyCode == 39 && d != "left") d = "right";
-        else if(event.keyCode == 40 && d != "up") d = "down";
-    }
+    // --- 秘籍系统 (Konami Code) ---
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiIndex = 0;
 
-    function changeDir(newDir) {
-        if(newDir == "left" && d != "right") d = "left";
-        if(newDir == "up" && d != "down") d = "up";
-        if(newDir == "right" && d != "left") d = "right";
-        if(newDir == "down" && d != "up") d = "down";
+    document.addEventListener("keydown", (e) => {
+        // 游戏控制
+        if(e.key == "ArrowLeft" && d != "right") d = "left";
+        else if(e.key == "ArrowUp" && d != "down") d = "up";
+        else if(e.key == "ArrowRight" && d != "left") d = "right";
+        else if(e.key == "ArrowDown" && d != "up") d = "down";
+
+        // 秘籍检测
+        if (e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase() || e.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                activateGodMode();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    });
+
+    function activateGodMode() {
+        if(isGodMode) return;
+        isGodMode = true;
+        body.classList.add('god-mode');
+        cheatStatus.innerText = "GOD MODE: ACTIVE [INVINCIBLE]";
+        statusText.innerText = "Running Optimized Build (God Mode)...";
+        console.log("%c [SYSTEM] God Mode Activated: No collision, Screen wrap enabled. ", "background: #f1c40f; color: #000; font-weight: bold; padding: 5px;");
     }
 
     function draw() {
@@ -183,13 +220,13 @@
 
         // 画蛇
         for (let i = 0; i < snake.length; i++) {
-            ctx.fillStyle = i == 0 ? "#58a6ff" : "#238636";
+            ctx.fillStyle = isGodMode ? "#f1c40f" : (i == 0 ? "#58a6ff" : "#238636");
             ctx.fillRect(snake[i].x, snake[i].y, box, box);
             ctx.strokeStyle = "#0d1117";
             ctx.strokeRect(snake[i].x, snake[i].y, box, box);
         }
 
-        // 画依赖包
+        // 画食物 (📦)
         ctx.font = "16px Arial";
         ctx.fillText("📦", food.x + 2, food.y + 15);
 
@@ -201,7 +238,15 @@
         if (d == "right") snakeX += box;
         if (d == "down") snakeY += box;
 
-        // 吃到依赖包
+        // 无敌模式：穿墙逻辑
+        if (isGodMode) {
+            if (snakeX < 0) snakeX = canvas.width - box;
+            else if (snakeX >= canvas.width) snakeX = 0;
+            if (snakeY < 0) snakeY = canvas.height - box;
+            else if (snakeY >= canvas.height) snakeY = 0;
+        }
+
+        // 吃到依赖包逻辑
         if (snakeX == food.x && snakeY == food.y) {
             score++;
             scoreEl.innerText = score;
@@ -215,14 +260,18 @@
 
         let newHead = { x: snakeX, y: snakeY };
 
-        // 死亡判定
-        if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
-            clearInterval(game);
-            if(score > bestScore) {
-                localStorage.setItem("fatcat-best", score);
-                bestEl.innerText = score;
+        // 死亡判定 (仅在普通模式生效)
+        if (!isGodMode) {
+            if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(gameInterval);
+                if(score > bestScore) {
+                    bestScore = score;
+                    localStorage.setItem("fatcat-snake-best", bestScore);
+                    bestEl.innerText = bestScore;
+                }
+                alert("Build Failed: Segmentation Fault. Final Score: " + score);
+                return;
             }
-            alert("Build Failed: Segmentation Fault. 最终代码长度: " + score);
         }
 
         snake.unshift(newHead);
@@ -236,29 +285,23 @@
     }
 
     function resetGame() {
-        clearInterval(game);
+        clearInterval(gameInterval);
         score = 0;
         scoreEl.innerText = 0;
         snake = [{ x: 10 * box, y: 10 * box }];
         d = "right";
-        game = setInterval(draw, 100);
+        gameInterval = setInterval(draw, 100);
     }
 
-    function startGame() {
-        game = setInterval(draw, 100);
-    }
-
-    // --- 控制台彩蛋 ---
-    console.log("%c FatCat Debugger ", "color: white; background: #238636; font-weight: bold;");
-    console.log("Nuitka Snake Engine ... [READY]");
-    console.log("Hint: Eat '📦' to increase compilation size.");
-
-    const statusText = document.getElementById('status-text');
-    const logs = ["Analyzing...", "Linking...", "Build Successful ✓"];
+    // 控制台彩蛋与初始化
+    console.log("%c FatCat Debug Console ", "color: white; background: #58a6ff; font-weight: bold; padding: 2px 5px; border-radius: 3px;");
+    console.log("Status: Listening for Konami input...");
+    
+    const logs = ["Initializing Nuitka...", "Packing libraries...", "Ready to build."];
     let lIdx = 0;
-    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 3000);
+    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 2500);
 
-    startGame();
+    resetGame();
 </script>
 
 </body>
