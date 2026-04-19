@@ -70,19 +70,20 @@
         .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
         
         /* 游戏区域样式 */
-        .game-grid {
+        .playground-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 15px;
             margin-top: 15px;
         }
         .game-btn {
             background: var(--border-color);
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
             border: 1px solid transparent;
+            transition: border-color 0.2s;
         }
         .game-btn:hover { border-color: var(--accent-color); }
 
@@ -93,13 +94,14 @@
             padding: 15px;
             border-radius: 8px;
             position: relative;
-            border: 1px solid var(--accent-color);
+            border: 2px solid var(--success-color);
         }
         canvas {
             display: block;
             margin: 0 auto;
             background: #050505;
             max-width: 100%;
+            border: 1px solid #333;
         }
         
         code {
@@ -124,7 +126,7 @@
     <div class="section">
         <h2>About Me</h2>
         <p>
-            热衷于构建高效、安全的跨平台工具。擅长在 <b>Windows</b> 桌面与 <b>Android (Termux)</b> 移动终端之间进行深度开发，
+            专注于构建高效、安全的跨平台工具。擅长在 <b>Windows</b> 桌面与 <b>Android (Termux)</b> 移动终端之间进行深度开发，
             专注于 Python 脚本的<b>闭源分发</b>与<b>自动化构建</b>流程。
         </p>
     </div>
@@ -136,7 +138,7 @@
             <span class="skill-tag">Nuitka & Cython</span>
             <span class="skill-tag">GitHub Actions CI/CD</span>
             <span class="skill-tag">Fabric & Meteor Modding</span>
-            <span class="skill-tag">C# / C++ Tooling</span>
+            <span class="skill-tag">Termux Scripting</span>
         </div>
     </div>
 
@@ -155,24 +157,21 @@
 
     <div class="section">
         <h2>Playground</h2>
-        <p>基于 JavaScript 的极客小游戏：</p>
-        <div class="game-grid">
-            <div class="game-btn" onclick="startPathfinder()">
-                <div style="font-size: 24px;">🤖</div>
-                <strong>Baritone Path</strong>
-                <div style="font-size: 0.8em; opacity: 0.6;">模拟自动寻路算法</div>
-            </div>
-            <div class="game-btn" onclick="alert('即将上线：Nuitka 编译速度大比拼！')">
-                <div style="font-size: 24px;">⚡</div>
-                <strong>Nuitka Racer</strong>
-                <div style="font-size: 0.8em; opacity: 0.6;">Coming Soon</div>
+        <p>开发累了？来试试真正的交互式解压小游戏（支持 WASD/方向键）：</p>
+        <div class="playground-grid">
+            <div class="game-btn" onclick="startEscape()">
+                <div style="font-size: 32px;">🐧</div>
+                <strong>Termux Escape</strong>
+                <div style="font-size: 0.8em; opacity: 0.6; margin-top: 5px;">
+                    控制 Python 脚本躲避 Bugs (🟥) 并寻找 icon.ico (💎)
+                </div>
             </div>
         </div>
 
         <div id="game-container">
-            <button onclick="closeGame()" style="position: absolute; top: 10px; right: 10px; background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Exit</button>
-            <canvas id="gameCanvas" width="400" height="300"></canvas>
-            <p id="game-hint" style="text-align: center; color: var(--accent-color); font-size: 0.9em; margin-top: 10px;"></p>
+            <button onclick="closeGame()" style="position: absolute; top: 10px; right: 10px; background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; z-index: 10;">Exit</button>
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            <p id="game-hint" style="text-align: center; color: var(--success-color); font-size: 0.9em; margin-top: 10px; font-family: monospace;"></p>
         </div>
     </div>
 
@@ -182,19 +181,19 @@
     </div>
 
     <footer>
-        <p>© 2026 FatCat. All rights reserved.</p>
+        <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
         <p>Build Status: <code id="status-text">Initializing...</code></p>
     </footer>
 </div>
 
 <script>
-    // --- 开发者彩蛋与状态更新 ---
+    // --- 开发者彩蛋与状态更新 (保持原样) ---
     const statusText = document.getElementById('status-text');
     const logs = [
         "Scanning for icon.ico...",
         "Applying --onefile optimization...",
         "Linking cl.exe (194 files)...",
-        "Success: Build completed ✓"
+        "Build Successful ✓"
     ];
     let logIdx = 0;
     const logInterval = setInterval(() => {
@@ -206,85 +205,167 @@
         }
     }, 1800);
 
-    console.log("%c FatCat System Enabled ", "color: #fff; background: #238636; padding: 5px; border-radius: 3px; font-weight: bold;");
-    console.log("Tip: Use 'git tag -d main' to avoid push conflicts!");
-
-    // --- 小游戏逻辑：Baritone 寻路模拟 ---
+    // --- 新游戏逻辑：Termux Escape ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('game-container');
     const hint = document.getElementById('game-hint');
     let gameLoop;
+    
+    const TILE_SIZE = 20; // 每个格子的尺寸
+    const GRID_SIZE = 20; // 20x20 的网格
 
-    function startPathfinder() {
-        container.style.display = 'block';
-        hint.innerText = "Baritone 正在计算最优路径...";
-        clearInterval(gameLoop);
+    // 迷宫定义：0=空地，1=墙壁(内存限制)
+    const maze = [
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+        [1,0,1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1],
+        [1,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1],
+        [1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1],
+        [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
+        [1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,0,1],
+        [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
+        [1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
+        [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1],
+        [1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1],
+        [1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1,0,1],
+        [1,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,0,1],
+        [1,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1],
+        [1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1],
+        [1,0,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
+        [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
+        [1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1],
+        [1,0,0,0,1,0,0,0,1,1,1,0,1,1,1,1,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
 
-        let player = { x: 20, y: 20 };
-        let target = { x: 350, y: 250 };
-        let obstacles = [];
-        for(let i=0; i<10; i++) {
-            obstacles.push({
-                x: Math.random() * 300 + 40,
-                y: Math.random() * 200 + 40,
-                w: 40, h: 40
-            });
+    let player = { x: 1, y: 1 }; // 起始位置
+    let target = { x: 18, y: 18 }; // 目标位置
+    let bugs = [ // Bugs 的位置
+        { x: 5, y: 1 }, { x: 9, y: 3 }, { x: 1, y: 7 }, 
+        { x: 15, y: 7 }, { x: 8, y: 11 }, { x: 12, y: 15 }
+    ];
+
+    let gameState = "playing"; // playing, win, over
+
+    function drawMaze() {
+        ctx.fillStyle = "#050505";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let y = 0; y < GRID_SIZE; y++) {
+            for (let x = 0; x < GRID_SIZE; x++) {
+                if (maze[y][x] === 1) {
+                    ctx.fillStyle = "#1e3a8a"; // 墙壁颜色
+                    ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1);
+                }
+            }
+        }
+    }
+
+    function drawEntities() {
+        // 画目标 (icon.ico)
+        ctx.fillStyle = "#58a6ff";
+        ctx.font = "16px Arial";
+        ctx.fillText("💎", target.x * TILE_SIZE + 2, target.y * TILE_SIZE + 16);
+
+        // 画 Bugs
+        ctx.fillStyle = "#da3633";
+        bugs.forEach(bug => {
+            ctx.fillRect(bug.x * TILE_SIZE + 4, bug.y * TILE_SIZE + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+        });
+
+        // 画玩家 (Python 脚本)
+        ctx.fillStyle = "#238636";
+        ctx.fillRect(player.x * TILE_SIZE + 2, player.y * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+    }
+
+    function checkCollision(newX, newY) {
+        // 墙壁检测
+        if (maze[newY][newX] === 1) return false;
+
+        // Bug 检测
+        for (let bug of bugs) {
+            if (bug.x === newX && bug.y === newY) {
+                gameState = "over";
+                return true;
+            }
         }
 
-        gameLoop = setInterval(() => {
-            // 清屏
-            ctx.fillStyle = "#050505";
-            ctx.fillRect(0, 0, 400, 300);
+        // 目标检测
+        if (newX === target.x && newY === target.y) {
+            gameState = "win";
+            return true;
+        }
 
-            // 画障碍物
+        return true;
+    }
+
+    function gameTick() {
+        drawMaze();
+        drawEntities();
+
+        if (gameState === "over") {
+            ctx.fillStyle = "rgba(0,0,0,0.8)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#da3633";
-            obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
-
-            // 画目标
-            ctx.fillStyle = "#58a6ff";
-            ctx.font = "20px Arial";
-            ctx.fillText("💎", target.x, target.y);
-
-            // 基础 AI 逻辑：避障移动
-            let dx = target.x - player.x;
-            let dy = target.y - player.y;
-            
-            let nextX = player.x + (dx > 0 ? 2 : -2);
-            let nextY = player.y + (dy > 0 ? 2 : -2);
-
-            // 简单的碰撞检测
-            let collision = obstacles.some(o => 
-                nextX < o.x + o.w && nextX + 10 > o.x &&
-                nextY < o.y + o.h && nextY + 10 > o.y
-            );
-
-            if (!collision) {
-                player.x = nextX;
-                player.y = nextY;
-            } else {
-                // 碰撞时随机绕行
-                player.x += (Math.random() - 0.5) * 5;
-                player.y += (Math.random() - 0.5) * 5;
-            }
-
-            // 画玩家
+            ctx.font = "30px monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("SyntaxError: Bug found!", 200, 200);
+            ctx.fillStyle = "white";
+            ctx.font = "16px monospace";
+            ctx.fillText("Press Exit and Restart", 200, 230);
+            hint.innerText = "> Status: COMPILATION_FAILED";
+        } else if (gameState === "win") {
+            ctx.fillStyle = "rgba(0,0,0,0.8)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#238636";
-            ctx.fillRect(player.x, player.y, 12, 12);
+            ctx.font = "30px monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("Build Successful!", 200, 200);
+            ctx.fillStyle = "white";
+            ctx.font = "16px monospace";
+            ctx.fillText("icon.ico generated", 200, 230);
+            hint.innerText = "> Status: icon.ico -> ./dist/icon.ico";
+        }
+    }
 
-            // 胜利判定
-            if (Math.hypot(player.x - target.x, player.y - target.y) < 15) {
-                ctx.fillStyle = "white";
-                ctx.textAlign = "center";
-                ctx.fillText("Path Found! Target Captured.", 200, 150);
-                clearInterval(gameLoop);
-            }
-        }, 30);
+    function handleInput(e) {
+        if (gameState !== "playing" || container.style.display !== 'block') return;
+        e.preventDefault(); // 防止滚动页面
+
+        let nextX = player.x;
+        let nextY = player.y;
+
+        switch(e.key.toLowerCase()) {
+            case "arrowup": case "w": nextY--; break;
+            case "arrowdown": case "s": nextY++; break;
+            case "arrowleft": case "a": nextX--; break;
+            case "arrowright": case "d": nextX++; break;
+            default: return;
+        }
+
+        if (checkCollision(nextX, nextY)) {
+            player.x = nextX;
+            player.y = nextY;
+            gameTick(); // 移动后立即重绘
+        }
+    }
+
+    function startEscape() {
+        container.style.display = 'block';
+        hint.innerText = ">$ python3 main.py --compile";
+        // 重置游戏状态
+        player = { x: 1, y: 1 };
+        gameState = "playing";
+        
+        document.addEventListener('keydown', handleInput);
+        gameTick(); // 初始绘制
     }
 
     function closeGame() {
         container.style.display = 'none';
-        clearInterval(gameLoop);
+        document.removeEventListener('keydown', handleInput);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 </script>
 
