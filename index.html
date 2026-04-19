@@ -11,6 +11,8 @@
             --accent-color: #58a6ff;
             --card-bg: #161b22;
             --border-color: #30363d;
+            --success-color: #238636;
+            --danger-color: #da3633;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -19,6 +21,7 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
         .container {
             max-width: 800px;
@@ -39,11 +42,11 @@
             margin-bottom: 20px;
             border: 1px solid var(--border-color);
         }
-        h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; }
+        h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; display: inline-block; margin-top: 0; }
         
         .skill-tag {
             display: inline-block;
-            background: #238636;
+            background: var(--success-color);
             color: white;
             padding: 4px 12px;
             border-radius: 15px;
@@ -52,22 +55,62 @@
         }
         .feature-card {
             margin-top: 15px;
-            padding-left: 15px;
+            padding: 15px;
             border-left: 3px solid var(--accent-color);
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
         }
-        .feature-card h3 { margin-bottom: 5px; color: #f0f6fc; }
+        .feature-card:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .feature-card h3 { margin: 0 0 10px 0; color: #f0f6fc; }
         .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
-        .feature-card h3 a:hover { text-decoration: underline; }
+        
+        /* 游戏区域样式 */
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .game-btn {
+            background: var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .game-btn:hover { border-color: var(--accent-color); }
+
+        #game-container {
+            display: none;
+            margin-top: 20px;
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+            border: 1px solid var(--accent-color);
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #050505;
+            max-width: 100%;
+        }
         
         code {
             background: #21262d;
             padding: 2px 5px;
             border-radius: 4px;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
         }
         footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
         img { max-width: 100%; border-radius: 5px; }
+        ul { padding-left: 20px; }
     </style>
 </head>
 <body>
@@ -75,86 +118,174 @@
 <div class="container">
     <header>
         <h1>FatCat 🐱</h1>
-        <p class="tagline">Python Developer & Automation Enthusiast</p>
+        <p class="tagline">Python Developer | Automation Specialist</p>
     </header>
 
     <div class="section">
         <h2>About Me</h2>
         <p>
-            专注于构建跨平台工具与自动化解决方案。擅长在 <b>Windows</b> 桌面环境与 <b>Android (Termux)</b> 移动端环境之间进行混合开发。
-            热衷于探索 Python 程序的编译优化、代码混淆与安全分发技术。
+            热衷于构建高效、安全的跨平台工具。擅长在 <b>Windows</b> 桌面与 <b>Android (Termux)</b> 移动终端之间进行深度开发，
+            专注于 Python 脚本的<b>闭源分发</b>与<b>自动化构建</b>流程。
         </p>
     </div>
 
     <div class="section">
         <h2>Tech Stack</h2>
         <div>
-            <span class="skill-tag">Python (BeeWare, Kivy)</span>
-            <span class="skill-tag">Nuitka (Onefile Compilation)</span>
-            <span class="skill-tag">GitHub Actions (CI/CD)</span>
-            <span class="skill-tag">C / C# (Desktop Tooling)</span>
-            <span class="skill-tag">Termux Development</span>
+            <span class="skill-tag">Python (BeeWare / Kivy)</span>
+            <span class="skill-tag">Nuitka & Cython</span>
+            <span class="skill-tag">GitHub Actions CI/CD</span>
+            <span class="skill-tag">Fabric & Meteor Modding</span>
+            <span class="skill-tag">C# / C++ Tooling</span>
         </div>
     </div>
 
     <div class="section">
         <h2>Key Project</h2>
-        
         <div class="feature-card">
-            <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update">QQ Quick Update</a></h3>
-            <p>基于 Python 的腾讯 QQ 等级加速工具。该项目深度集成了 GitHub Actions 自动化工作流，实现了从源码提交到 Nuitka 编译、混淆打包、并自动发布 Release 的全生命周期管理。</p>
+            <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank">QQ Quick Update</a></h3>
+            <p>集成 GitHub Actions 自动化工作流的腾讯 QQ 等级加速工具：</p>
             <ul>
-                <li>采用 <code>--onefile</code> 模式编译，提供极致的单文件分发体验。</li>
-                <li>针对 Windows 环境进行了 GUI 优化与图标集成。</li>
-                <li>完全基于云端 Runner 构建，无需本地繁琐的 C++ 编译器配置。</li>
+                <li>利用 <b>Nuitka</b> 实现源码混淆与 <code>--onefile</code> 独立打包。</li>
+                <li>云端自动编译 Release，支持 Windows 环境无缝分发。</li>
+                <li>极致的体积优化与系统依赖管理。</li>
             </ul>
         </div>
     </div>
 
     <div class="section">
-        <h2>Technical Focus</h2>
-        
-        <div class="feature-card">
-            <h3>🛡️ 代码保护与闭源化</h3>
-            <p>深入研究 Nuitka、Cython 等技术，在保障 Python 开发效率的同时，实现商业级的代码加密与分发安全。</p>
+        <h2>Playground</h2>
+        <p>基于 JavaScript 的极客小游戏：</p>
+        <div class="game-grid">
+            <div class="game-btn" onclick="startPathfinder()">
+                <div style="font-size: 24px;">🤖</div>
+                <strong>Baritone Path</strong>
+                <div style="font-size: 0.8em; opacity: 0.6;">模拟自动寻路算法</div>
+            </div>
+            <div class="game-btn" onclick="alert('即将上线：Nuitka 编译速度大比拼！')">
+                <div style="font-size: 24px;">⚡</div>
+                <strong>Nuitka Racer</strong>
+                <div style="font-size: 0.8em; opacity: 0.6;">Coming Soon</div>
+            </div>
         </div>
 
-        <div class="feature-card">
-            <h3>🐧 跨环境开发</h3>
-            <p>熟练处理移动端 Linux (Termux) 与桌面端 Windows 之间的依赖编译与权限兼容性挑战。</p>
+        <div id="game-container">
+            <button onclick="closeGame()" style="position: absolute; top: 10px; right: 10px; background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Exit</button>
+            <canvas id="gameCanvas" width="400" height="300"></canvas>
+            <p id="game-hint" style="text-align: center; color: var(--accent-color); font-size: 0.9em; margin-top: 10px;"></p>
         </div>
     </div>
 
     <div class="section">
-        <h2>GitHub Stats</h2>
-        <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="FatCat's GitHub Stats">
+        <h2>GitHub Activity</h2>
+        <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="Stats">
     </div>
 
     <footer>
-        <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
-        <p>Status: <code id="status-text">Ready to deploy</code></p>
+        <p>© 2026 FatCat. All rights reserved.</p>
+        <p>Build Status: <code id="status-text">Initializing...</code></p>
     </footer>
 </div>
 
 <script>
-    // 你的开发者彩蛋
-    console.log("%c FatCat OS ", "color: #58a6ff; background: #161b22; font-size: 20px; font-weight: bold;");
-    console.log("Checking for icon.ico... %c[FOUND]", "color: #238636");
-    console.log("Nuitka building QQ_quick_update... %c[SUCCESS]", "color: #238636");
-
-    const status = document.getElementById('status-text');
+    // --- 开发者彩蛋与状态更新 ---
+    const statusText = document.getElementById('status-text');
     const logs = [
-        "Analyzing QQ_quick_update dependencies...",
-        "Calling cl.exe for C compilation...",
-        "Linking --onefile executable...",
-        "Build Successful ✓"
+        "Scanning for icon.ico...",
+        "Applying --onefile optimization...",
+        "Linking cl.exe (194 files)...",
+        "Success: Build completed ✓"
     ];
-    let i = 0;
-    const interval = setInterval(() => {
-        status.innerText = logs[i];
-        i++;
-        if (i >= logs.length) clearInterval(interval);
-    }, 1500);
+    let logIdx = 0;
+    const logInterval = setInterval(() => {
+        if (logIdx < logs.length) {
+            statusText.innerText = logs[logIdx];
+            logIdx++;
+        } else {
+            clearInterval(logInterval);
+        }
+    }, 1800);
+
+    console.log("%c FatCat System Enabled ", "color: #fff; background: #238636; padding: 5px; border-radius: 3px; font-weight: bold;");
+    console.log("Tip: Use 'git tag -d main' to avoid push conflicts!");
+
+    // --- 小游戏逻辑：Baritone 寻路模拟 ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('game-container');
+    const hint = document.getElementById('game-hint');
+    let gameLoop;
+
+    function startPathfinder() {
+        container.style.display = 'block';
+        hint.innerText = "Baritone 正在计算最优路径...";
+        clearInterval(gameLoop);
+
+        let player = { x: 20, y: 20 };
+        let target = { x: 350, y: 250 };
+        let obstacles = [];
+        for(let i=0; i<10; i++) {
+            obstacles.push({
+                x: Math.random() * 300 + 40,
+                y: Math.random() * 200 + 40,
+                w: 40, h: 40
+            });
+        }
+
+        gameLoop = setInterval(() => {
+            // 清屏
+            ctx.fillStyle = "#050505";
+            ctx.fillRect(0, 0, 400, 300);
+
+            // 画障碍物
+            ctx.fillStyle = "#da3633";
+            obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+
+            // 画目标
+            ctx.fillStyle = "#58a6ff";
+            ctx.font = "20px Arial";
+            ctx.fillText("💎", target.x, target.y);
+
+            // 基础 AI 逻辑：避障移动
+            let dx = target.x - player.x;
+            let dy = target.y - player.y;
+            
+            let nextX = player.x + (dx > 0 ? 2 : -2);
+            let nextY = player.y + (dy > 0 ? 2 : -2);
+
+            // 简单的碰撞检测
+            let collision = obstacles.some(o => 
+                nextX < o.x + o.w && nextX + 10 > o.x &&
+                nextY < o.y + o.h && nextY + 10 > o.y
+            );
+
+            if (!collision) {
+                player.x = nextX;
+                player.y = nextY;
+            } else {
+                // 碰撞时随机绕行
+                player.x += (Math.random() - 0.5) * 5;
+                player.y += (Math.random() - 0.5) * 5;
+            }
+
+            // 画玩家
+            ctx.fillStyle = "#238636";
+            ctx.fillRect(player.x, player.y, 12, 12);
+
+            // 胜利判定
+            if (Math.hypot(player.x - target.x, player.y - target.y) < 15) {
+                ctx.fillStyle = "white";
+                ctx.textAlign = "center";
+                ctx.fillText("Path Found! Target Captured.", 200, 150);
+                clearInterval(gameLoop);
+            }
+        }, 30);
+    }
+
+    function closeGame() {
+        container.style.display = 'none';
+        clearInterval(gameLoop);
+    }
 </script>
 
 </body>
