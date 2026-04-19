@@ -12,7 +12,6 @@
             --card-bg: #161b22;
             --border-color: #30363d;
             --success-color: #238636;
-            --danger-color: #da3633;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -55,7 +54,7 @@
         }
         .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
 
-        /* 游戏区域样式 */
+        /* 游戏区域 */
         #game-board {
             display: grid;
             gap: 2px;
@@ -63,11 +62,12 @@
             background: #333;
             border: 4px solid #444;
             width: fit-content;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .tile {
-            width: 38px; height: 38px;
+            width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; background: #0d1117;
+            font-size: 22px; background: #0d1117;
         }
         .wall { background: #30363d; }
         .target { background: #163020; box-shadow: inset 0 0 5px var(--success-color); }
@@ -76,11 +76,12 @@
         button {
             padding: 10px 18px; border: none; border-radius: 6px;
             background: var(--accent-color); color: white; cursor: pointer; font-weight: bold;
+            transition: opacity 0.2s;
         }
         button.dir { background: #30363d; width: 50px; height: 50px; font-size: 20px; }
-        button:active { filter: brightness(1.2); }
+        button:hover { opacity: 0.8; }
         
-        footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
+        footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; border-top: 1px solid var(--border-color); padding-top: 20px; }
         code { background: #21262d; padding: 2px 5px; border-radius: 4px; font-family: monospace; color: var(--accent-color); }
         img { max-width: 100%; border-radius: 5px; margin-top: 10px; }
     </style>
@@ -95,24 +96,14 @@
 
     <div class="section">
         <h2>About Me</h2>
-        <p>专注于 <b>Windows</b> 与 <b>Termux</b> 跨平台开发。擅长 Python 自动化工作流构建、Nuitka 闭源打包及 GitHub Actions 部署。</p>
-    </div>
-
-    <div class="section">
-        <h2>Tech Stack</h2>
-        <div>
-            <span class="skill-tag">Python (BeeWare/Kivy)</span>
-            <span class="skill-tag">Nuitka & CI/CD</span>
-            <span class="skill-tag">Android Termux</span>
-            <span class="skill-tag">C# & C++ Tooling</span>
-        </div>
+        <p>专注于 <b>Windows</b> 与 <b>Termux</b> 开发，擅长 Python 自动化构建及 Nuitka 闭源打包方案。</p>
     </div>
 
     <div class="section">
         <h2>Key Project</h2>
         <div class="feature-card">
             <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank">QQ Quick Update</a></h3>
-            <p>基于 Nuitka 编译与 GitHub Actions 的腾讯 QQ 等级加速工具。实现源码自动混淆、多环境发布与 <code>--onefile</code> 极致分发。</p>
+            <p>基于 Nuitka 混淆打包的自动化加速工具。支持多环境一键发布及极致的单文件体验。</p>
         </div>
     </div>
 
@@ -123,7 +114,7 @@
         <div id="game-board"></div>
         
         <div class="btn-group">
-            <button onclick="generateRandomLevel()">生成随机关卡 (100% 可解)</button>
+            <button onclick="generateRandomLevel()">生成新关卡 (2-3个源码包)</button>
         </div>
 
         <div style="margin-top: 15px;">
@@ -134,7 +125,7 @@
                 <button class="dir" onclick="move('d')">→</button>
             </div>
         </div>
-        <p id="game-msg" style="margin-top:15px; font-family:monospace; min-height: 1.5em; color:var(--success-color);"></p>
+        <p id="game-msg" style="margin-top:15px; font-family:monospace; min-height: 1.5em; text-align:center;"></p>
     </div>
 
     <div class="section">
@@ -143,29 +134,30 @@
     </div>
 
     <footer>
-        <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
-        <p>Build Status: <code id="status-text">Initializing...</code></p>
+        <p>© 2026 FatCat. Build Status: <code id="status-text">Ready</code></p>
     </footer>
 </div>
 
 <script>
-    // --- 关卡算法逻辑 ---
-    const ROWS = 7, COLS = 8;
+    const ROWS = 8, COLS = 8;
     let map = [];
     let player = {x: 0, y: 0};
     let targets = [];
 
     function generateRandomLevel() {
-        document.getElementById('game-msg').innerText = "Status: Re-compiling level...";
-        // 初始化地图
+        document.getElementById('game-msg').innerText = ">$ nuitka --generate-level ...";
+        document.getElementById('game-msg').style.color = "var(--text-color)";
+        
+        // 初始化地图：四周包墙
         map = Array.from({length: ROWS}, (_, y) => 
             Array.from({length: COLS}, (_, x) => (x===0 || x===COLS-1 || y===0 || y===ROWS-1) ? 1 : 0)
         );
 
-        // 放置目标和箱子 (通关态)
+        // 随机放置 2-3 个目标点和箱子 (初始为完成态)
         targets = [];
+        let numBoxes = Math.floor(Math.random() * 2) + 2; // 随机 2 或 3
         let count = 0;
-        while(count < 3) {
+        while(count < numBoxes) {
             let rx = Math.floor(Math.random()*(COLS-2))+1;
             let ry = Math.floor(Math.random()*(ROWS-2))+1;
             if(map[ry][rx] === 0) {
@@ -175,29 +167,29 @@
             }
         }
 
-        // 放置玩家
+        // 放置玩家初始位置
         do {
             player.x = Math.floor(Math.random()*(COLS-2))+1;
             player.y = Math.floor(Math.random()*(ROWS-2))+1;
         } while(map[player.y][player.x] !== 0);
         map[player.y][player.x] = 4;
 
-        // 逆向拉动算法打乱
-        for(let i=0; i<120; i++) {
+        // 逆向拉动算法 (Shuffle)
+        for(let i=0; i<150; i++) {
             const dirs = [{dx:0,dy:1},{dx:0,dy:-1},{dx:1,dy:0},{dx:-1,dy:0}];
             const d = dirs[Math.floor(Math.random()*4)];
-            let nx = player.x + d.dx, ny = player.y + d.dy;
-            let bx = player.x - d.dx, by = player.y - d.dy;
-            let bbx = player.x - 2*d.dx, bby = player.y - 2*d.dy;
+            let nx = player.x + d.dx, ny = player.y + d.dy;     // 移动位
+            let bx = player.x - d.dx, by = player.y - d.dy;     // 身后位
+            let bbx = player.x - 2*d.dx, bby = player.y - 2*d.dy; // 终点位
 
-            // 逆向拉动箱子
+            // 逆向拉动逻辑
             if(isInside(bx, by) && (map[by][bx] === 3 || map[by][bx] === 5)) {
                 if(isInside(bbx, bby) && map[bby][bbx] === 0) {
                     map[by][bx] = isT(bx, by) ? 2 : 0;
                     map[bby][bbx] = isT(bbx, bby) ? 5 : 3;
                 }
             }
-            // 玩家随机游走
+            // 玩家游走
             if(isInside(nx, ny) && map[ny][nx] !== 1) {
                 map[player.y][player.x] = isT(player.x, player.y) ? 2 : 0;
                 player = {x: nx, y: ny};
@@ -213,7 +205,7 @@
     function render() {
         const board = document.getElementById('game-board');
         board.innerHTML = '';
-        board.style.gridTemplateColumns = `repeat(${COLS}, 38px)`;
+        board.style.gridTemplateColumns = `repeat(${COLS}, 40px)`;
         for(let y=0; y<ROWS; y++) {
             for(let x=0; x<COLS; x++) {
                 const tile = document.createElement('div');
@@ -228,7 +220,10 @@
                 board.appendChild(tile);
             }
         }
-        if(!map.some(row => row.includes(3))) document.getElementById('game-msg').innerText = "SUCCESS: Binary Compiled! ✓";
+        if(!map.some(row => row.includes(3))) {
+            document.getElementById('game-msg').innerText = "BUILD SUCCESS! ✓ Binary Generated.";
+            document.getElementById('game-msg').style.color = "var(--success-color)";
+        }
     }
 
     function move(dir) {
@@ -246,7 +241,7 @@
         } else if(map[ny][nx] === 3 || map[ny][nx] === 5) {
             if(map[nny][nnx] === 0 || map[nny][nnx] === 2) {
                 map[nny][nnx] = isT(nnx, nny) ? 5 : 3;
-                map[ny][nx] = isT(nx, ny) ? 2 : 4;
+                map[ny][nx] = 4;
                 map[player.y][player.x] = isT(player.x, player.y) ? 2 : 0;
                 player = {x: nx, y: ny};
             }
@@ -254,18 +249,22 @@
         render();
     }
 
-    // 控制与彩蛋
     document.addEventListener('keydown', e => {
         const k = { 'ArrowUp':'w','ArrowDown':'s','ArrowLeft':'a','ArrowRight':'d','w':'w','a':'a','s':'s','d':'d' };
         if(k[e.key]) { e.preventDefault(); move(k[e.key]); }
     });
 
-    const statusText = document.getElementById('status-text');
-    const logs = ["Searching for icon.ico...", "Linking cl.exe...", "Optimizing...", "Build Successful ✓"];
-    let lIdx = 0;
-    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 2000);
+    // --- 控制台彩蛋 ---
+    console.log("%c FatCat OS ", "color: white; background: #58a6ff; font-weight: bold; border-radius: 3px; padding: 2px 5px;");
+    console.log("Checking for icon.ico... [FOUND]");
+    console.log("Running Nuitka with --onefile and --mingw64...");
+    console.log("%cHint: Use 'generateRandomLevel()' in console to force a re-compile!", "color: #8b949e; font-style: italic;");
 
-    console.log("%c FatCat OS ", "color: #58a6ff; background: #161b22; font-weight: bold;");
+    const statusText = document.getElementById('status-text');
+    const logs = ["Compiling C source...", "Linking libraries...", "Packing --onefile...", "Done."];
+    let lIdx = 0;
+    setInterval(() => { if(lIdx < logs.length) statusText.innerText = logs[lIdx++]; }, 2500);
+
     generateRandomLevel();
 </script>
 
