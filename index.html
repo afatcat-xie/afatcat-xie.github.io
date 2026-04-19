@@ -129,10 +129,26 @@
 </div>
 
 <script>
-    // 自动更新状态文本的小脚本
+    // 彩蛋 1：控制台悄悄话
+    console.log("%c FatCat OS ", "color: #58a6ff; background: #161b22; font-size: 20px; font-weight: bold;");
+    console.log("Checking for icon.ico... %c[FOUND]", "color: #238636");
+    console.log("Running Nuitka with --onefile... %c[SUCCESS]", "color: #238636");
+    console.log("提示：这个页面已经过 Nuitka 混淆（并没有），普通人看不懂你的代码逻辑。");
+
+    // 彩蛋 2：页面底部动态状态
     const status = document.getElementById('status-text');
-    const date = new Date().toLocaleDateString();
-    status.innerText = `${date} | Build Successful ✓`;
+    const logs = [
+        "Analyzing dependencies...",
+        "Linking cl.exe (194 files)...",
+        "Stripping symbols...",
+        "Build Successful ✓"
+    ];
+    let i = 0;
+    const interval = setInterval(() => {
+        status.innerText = logs[i];
+        i++;
+        if (i >= logs.length) clearInterval(interval);
+    }, 1500);
 </script>
 
 </body>
