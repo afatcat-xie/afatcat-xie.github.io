@@ -19,19 +19,10 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            margin: 0; padding: 0;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 50px; }
         h1 { color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px; }
         .tagline { font-style: italic; opacity: 0.8; }
         
@@ -60,59 +51,44 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 0 8px 8px 0;
             margin-bottom: 15px;
-            transition: transform 0.2s;
         }
-        .feature-card:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .feature-card h3 { margin: 0 0 10px 0; color: #f0f6fc; }
         .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
-        
-        /* 游戏区域样式 */
-        .playground-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .game-btn {
-            background: var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-        .game-btn:hover { border-color: var(--accent-color); }
 
+        /* 推箱子游戏样式 */
         #game-container {
             display: none;
             margin-top: 20px;
             background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            position: relative;
-            border: 2px solid var(--success-color);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--accent-color);
         }
-        canvas {
-            display: block;
+        #game-board {
+            display: grid;
+            gap: 2px;
             margin: 0 auto;
-            background: #050505;
-            max-width: 100%;
-            border: 1px solid #333;
+            background: #333;
+            border: 4px solid #444;
+            width: fit-content;
         }
+        .tile {
+            width: 35px; height: 35px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; background: #0d1117;
+        }
+        .wall { background: #30363d; }
+        .target { background: #163020; box-shadow: inset 0 0 5px var(--success-color); }
         
-        code {
-            background: #21262d;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+        .controls { margin-top: 15px; display: flex; justify-content: center; gap: 10px; }
+        button {
+            padding: 8px 15px; border: none; border-radius: 5px;
+            background: var(--accent-color); color: white; cursor: pointer;
         }
+        button.secondary { background: #30363d; }
+        
         footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
-        img { max-width: 100%; border-radius: 5px; }
-        ul { padding-left: 20px; }
+        code { background: #21262d; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -125,20 +101,16 @@
 
     <div class="section">
         <h2>About Me</h2>
-        <p>
-            专注于构建高效、安全的跨平台工具。擅长在 <b>Windows</b> 桌面与 <b>Android (Termux)</b> 移动终端之间进行深度开发，
-            专注于 Python 脚本的<b>闭源分发</b>与<b>自动化构建</b>流程。
-        </p>
+        <p>专注于 <b>Windows</b> 与 <b>Termux</b> 跨平台开发，精通 Python 自动化构建与 Nuitka 闭源打包方案。</p>
     </div>
 
     <div class="section">
         <h2>Tech Stack</h2>
         <div>
-            <span class="skill-tag">Python (BeeWare / Kivy)</span>
+            <span class="skill-tag">Python (BeeWare/Kivy)</span>
             <span class="skill-tag">Nuitka & Cython</span>
             <span class="skill-tag">GitHub Actions CI/CD</span>
-            <span class="skill-tag">Fabric & Meteor Modding</span>
-            <span class="skill-tag">Termux Scripting</span>
+            <span class="skill-tag">Android Termux</span>
         </div>
     </div>
 
@@ -146,227 +118,131 @@
         <h2>Key Project</h2>
         <div class="feature-card">
             <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank">QQ Quick Update</a></h3>
-            <p>集成 GitHub Actions 自动化工作流的腾讯 QQ 等级加速工具：</p>
-            <ul>
-                <li>利用 <b>Nuitka</b> 实现源码混淆与 <code>--onefile</code> 独立打包。</li>
-                <li>云端自动编译 Release，支持 Windows 环境无缝分发。</li>
-                <li>极致的体积优化与系统依赖管理。</li>
-            </ul>
+            <p>基于 Nuitka 混淆打包的自动化更新工具，集成 GitHub Actions 实现云端编译与 Release 分发。</p>
         </div>
     </div>
 
     <div class="section">
-        <h2>Playground</h2>
-        <p>开发累了？来试试真正的交互式解压小游戏（支持 WASD/方向键）：</p>
-        <div class="playground-grid">
-            <div class="game-btn" onclick="startEscape()">
-                <div style="font-size: 32px;">🐧</div>
-                <strong>Termux Escape</strong>
-                <div style="font-size: 0.8em; opacity: 0.6; margin-top: 5px;">
-                    控制 Python 脚本躲避 Bugs (🟥) 并寻找 icon.ico (💎)
-                </div>
-            </div>
-        </div>
-
+        <h2>Playground: Nuitka Sokoban</h2>
+        <p>将<b>源码包 (📦)</b> 推到<b>编译器出口 (🎯)</b> 来完成构建：</p>
+        <button onclick="initGame()">开始/重置游戏</button>
+        
         <div id="game-container">
-            <button onclick="closeGame()" style="position: absolute; top: 10px; right: 10px; background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; z-index: 10;">Exit</button>
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            <p id="game-hint" style="text-align: center; color: var(--success-color); font-size: 0.9em; margin-top: 10px; font-family: monospace;"></p>
+            <div id="game-board"></div>
+            <div class="controls">
+                <button class="secondary" onclick="move('w')">↑</button>
+            </div>
+            <div class="controls">
+                <button class="secondary" onclick="move('a')">←</button>
+                <button class="secondary" onclick="move('s')">↓</button>
+                <button class="secondary" onclick="move('d')">→</button>
+            </div>
+            <p id="game-msg" style="margin-top:10px; font-family:monospace; color:var(--success-color);"></p>
+            <button class="secondary" style="margin-top:10px;" onclick="closeGame()">退出</button>
         </div>
-    </div>
-
-    <div class="section">
-        <h2>GitHub Activity</h2>
-        <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="Stats">
     </div>
 
     <footer>
-        <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
-        <p>Build Status: <code id="status-text">Initializing...</code></p>
+        <p>© 2026 FatCat. Build Status: <code id="status-text">Ready</code></p>
     </footer>
 </div>
 
 <script>
-    // --- 开发者彩蛋与状态更新 (保持原样) ---
-    const statusText = document.getElementById('status-text');
-    const logs = [
-        "Scanning for icon.ico...",
-        "Applying --onefile optimization...",
-        "Linking cl.exe (194 files)...",
-        "Build Successful ✓"
+    // 游戏配置：1=墙, 2=目标, 3=箱子, 4=玩家, 5=箱子在目标上
+    const level = [
+        [1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,3,2,1,0,0,1],
+        [1,0,0,4,0,3,2,1],
+        [1,0,2,3,0,0,0,1],
+        [1,1,1,1,1,1,1,1]
     ];
-    let logIdx = 0;
-    const logInterval = setInterval(() => {
-        if (logIdx < logs.length) {
-            statusText.innerText = logs[logIdx];
-            logIdx++;
-        } else {
-            clearInterval(logInterval);
-        }
-    }, 1800);
+    let map = [];
+    let playerPos = {x:0, y:0};
 
-    // --- 新游戏逻辑：Termux Escape ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const container = document.getElementById('game-container');
-    const hint = document.getElementById('game-hint');
-    let gameLoop;
-    
-    const TILE_SIZE = 20; // 每个格子的尺寸
-    const GRID_SIZE = 20; // 20x20 的网格
-
-    // 迷宫定义：0=空地，1=墙壁(内存限制)
-    const maze = [
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-        [1,0,1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,0,1],
-        [1,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1],
-        [1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1],
-        [1,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1],
-        [1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,0,1],
-        [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
-        [1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1],
-        [1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1],
-        [1,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,1,0,1],
-        [1,0,1,1,1,1,0,1,1,1,1,1,0,1,0,1,0,1,0,1],
-        [1,0,1,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1],
-        [1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1],
-        [1,0,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1],
-        [1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1],
-        [1,0,0,0,1,0,0,0,1,1,1,0,1,1,1,1,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ];
-
-    let player = { x: 1, y: 1 }; // 起始位置
-    let target = { x: 18, y: 18 }; // 目标位置
-    let bugs = [ // Bugs 的位置
-        { x: 5, y: 1 }, { x: 9, y: 3 }, { x: 1, y: 7 }, 
-        { x: 15, y: 7 }, { x: 8, y: 11 }, { x: 12, y: 15 }
-    ];
-
-    let gameState = "playing"; // playing, win, over
-
-    function drawMaze() {
-        ctx.fillStyle = "#050505";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                if (maze[y][x] === 1) {
-                    ctx.fillStyle = "#1e3a8a"; // 墙壁颜色
-                    ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1);
-                }
-            }
-        }
+    function initGame() {
+        document.getElementById('game-container').style.display = 'block';
+        document.getElementById('game-msg').innerText = "Status: Awaiting input...";
+        map = JSON.parse(JSON.stringify(level));
+        render();
+        window.addEventListener('keydown', handleKey);
     }
 
-    function drawEntities() {
-        // 画目标 (icon.ico)
-        ctx.fillStyle = "#58a6ff";
-        ctx.font = "16px Arial";
-        ctx.fillText("💎", target.x * TILE_SIZE + 2, target.y * TILE_SIZE + 16);
-
-        // 画 Bugs
-        ctx.fillStyle = "#da3633";
-        bugs.forEach(bug => {
-            ctx.fillRect(bug.x * TILE_SIZE + 4, bug.y * TILE_SIZE + 4, TILE_SIZE - 8, TILE_SIZE - 8);
-        });
-
-        // 画玩家 (Python 脚本)
-        ctx.fillStyle = "#238636";
-        ctx.fillRect(player.x * TILE_SIZE + 2, player.y * TILE_SIZE + 2, TILE_SIZE - 4, TILE_SIZE - 4);
-    }
-
-    function checkCollision(newX, newY) {
-        // 墙壁检测
-        if (maze[newY][newX] === 1) return false;
-
-        // Bug 检测
-        for (let bug of bugs) {
-            if (bug.x === newX && bug.y === newY) {
-                gameState = "over";
-                return true;
-            }
-        }
-
-        // 目标检测
-        if (newX === target.x && newY === target.y) {
-            gameState = "win";
-            return true;
-        }
-
-        return true;
-    }
-
-    function gameTick() {
-        drawMaze();
-        drawEntities();
-
-        if (gameState === "over") {
-            ctx.fillStyle = "rgba(0,0,0,0.8)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#da3633";
-            ctx.font = "30px monospace";
-            ctx.textAlign = "center";
-            ctx.fillText("SyntaxError: Bug found!", 200, 200);
-            ctx.fillStyle = "white";
-            ctx.font = "16px monospace";
-            ctx.fillText("Press Exit and Restart", 200, 230);
-            hint.innerText = "> Status: COMPILATION_FAILED";
-        } else if (gameState === "win") {
-            ctx.fillStyle = "rgba(0,0,0,0.8)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#238636";
-            ctx.font = "30px monospace";
-            ctx.textAlign = "center";
-            ctx.fillText("Build Successful!", 200, 200);
-            ctx.fillStyle = "white";
-            ctx.font = "16px monospace";
-            ctx.fillText("icon.ico generated", 200, 230);
-            hint.innerText = "> Status: icon.ico -> ./dist/icon.ico";
-        }
-    }
-
-    function handleInput(e) {
-        if (gameState !== "playing" || container.style.display !== 'block') return;
-        e.preventDefault(); // 防止滚动页面
-
-        let nextX = player.x;
-        let nextY = player.y;
-
-        switch(e.key.toLowerCase()) {
-            case "arrowup": case "w": nextY--; break;
-            case "arrowdown": case "s": nextY++; break;
-            case "arrowleft": case "a": nextX--; break;
-            case "arrowright": case "d": nextX++; break;
-            default: return;
-        }
-
-        if (checkCollision(nextX, nextY)) {
-            player.x = nextX;
-            player.y = nextY;
-            gameTick(); // 移动后立即重绘
-        }
-    }
-
-    function startEscape() {
-        container.style.display = 'block';
-        hint.innerText = ">$ python3 main.py --compile";
-        // 重置游戏状态
-        player = { x: 1, y: 1 };
-        gameState = "playing";
+    function render() {
+        const board = document.getElementById('game-board');
+        board.innerHTML = '';
+        board.style.gridTemplateColumns = `repeat(${map[0].length}, 35px)`;
         
-        document.addEventListener('keydown', handleInput);
-        gameTick(); // 初始绘制
+        for(let y=0; y<map.length; y++) {
+            for(let x=0; x<map[y].length; x++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                if(map[y][x] === 1) tile.classList.add('wall');
+                if(map[y][x] === 2) tile.classList.add('target');
+                
+                if(map[y][x] === 4) { tile.innerText = '🐱'; playerPos = {x, y}; }
+                else if(map[y][x] === 3) tile.innerText = '📦';
+                else if(map[y][x] === 5) { tile.innerText = '✅'; tile.classList.add('target'); }
+                else if(map[y][x] === 2) tile.innerText = '🎯';
+                
+                board.appendChild(tile);
+            }
+        }
+        checkWin();
+    }
+
+    function move(dir) {
+        let dx = 0, dy = 0;
+        if(dir === 'w') dy = -1;
+        if(dir === 's') dy = 1;
+        if(dir === 'a') dx = -1;
+        if(dir === 'd') dx = 1;
+
+        let nx = playerPos.x + dx, ny = playerPos.y + dy;
+        let nnx = nx + dx, nny = ny + dy;
+
+        // 移动逻辑
+        if(map[ny][nx] === 0 || map[ny][nx] === 2) {
+            updateTile(playerPos.x, playerPos.y, nx, ny);
+        } else if(map[ny][nx] === 3 || map[ny][nx] === 5) {
+            if(map[nny][nnx] === 0 || map[nny][nnx] === 2) {
+                // 先推箱子
+                map[nny][nnx] = (map[nny][nnx] === 2) ? 5 : 3;
+                map[ny][nx] = (map[ny][nx] === 5) ? 2 : 0;
+                // 再动人
+                updateTile(playerPos.x, playerPos.y, nx, ny);
+            }
+        }
+        render();
+    }
+
+    function updateTile(ox, oy, nx, ny) {
+        map[oy][ox] = (level[oy][ox] === 2) ? 2 : 0;
+        map[ny][nx] = 4;
+        playerPos = {x: nx, y: ny};
+    }
+
+    function checkWin() {
+        const win = !map.some(row => row.includes(3));
+        if(win) document.getElementById('game-msg').innerText = "SUCCESS: Binary Compiled! ✓";
+    }
+
+    function handleKey(e) {
+        const keys = { 'ArrowUp':'w', 'ArrowDown':'s', 'ArrowLeft':'a', 'ArrowRight':'d', 'w':'w', 'a':'a', 's':'s', 'd':'d' };
+        if(keys[e.key]) { e.preventDefault(); move(keys[e.key]); }
     }
 
     function closeGame() {
-        container.style.display = 'none';
-        document.removeEventListener('keydown', handleInput);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('game-container').style.display = 'none';
+        window.removeEventListener('keydown', handleKey);
     }
+
+    // 状态栏彩蛋
+    setInterval(() => {
+        const status = document.getElementById('status-text');
+        const tasks = ["Linking...", "Packing...", "Ready"];
+        status.innerText = tasks[Math.floor(Math.random()*tasks.length)];
+    }, 3000);
 </script>
 
 </body>
