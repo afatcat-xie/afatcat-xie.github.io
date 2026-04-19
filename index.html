@@ -57,6 +57,8 @@
             margin-bottom: 20px;
         }
         .feature-card h3 { margin-bottom: 5px; color: #f0f6fc; }
+        .feature-card h3 a { color: var(--accent-color); text-decoration: none; }
+        .feature-card h3 a:hover { text-decoration: underline; }
         
         code {
             background: #21262d;
@@ -66,8 +68,6 @@
         }
         footer { text-align: center; margin-top: 50px; font-size: 0.8em; opacity: 0.6; }
         img { max-width: 100%; border-radius: 5px; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -82,18 +82,32 @@
         <h2>About Me</h2>
         <p>
             专注于构建跨平台工具与自动化解决方案。擅长在 <b>Windows</b> 桌面环境与 <b>Android (Termux)</b> 移动端环境之间进行混合开发。
-            热衷于探索 Python 程序的编译、混淆与安全分发技术。
+            热衷于探索 Python 程序的编译优化、代码混淆与安全分发技术。
         </p>
     </div>
 
     <div class="section">
         <h2>Tech Stack</h2>
         <div>
-            <span class="skill-tag">Python (BeeWare, Kivy, PySide)</span>
+            <span class="skill-tag">Python (BeeWare, Kivy)</span>
             <span class="skill-tag">Nuitka (Onefile Compilation)</span>
             <span class="skill-tag">GitHub Actions (CI/CD)</span>
             <span class="skill-tag">C / C# (Desktop Tooling)</span>
-            <span class="skill-tag">Shell & PowerShell Scripting</span>
+            <span class="skill-tag">Termux Development</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Key Project</h2>
+        
+        <div class="feature-card">
+            <h3>🚀 <a href="https://github.com/afatcat-xie/QQ_qiuck_update">QQ Quick Update</a></h3>
+            <p>基于 Python 的腾讯 QQ 等级加速工具。该项目深度集成了 GitHub Actions 自动化工作流，实现了从源码提交到 Nuitka 编译、混淆打包、并自动发布 Release 的全生命周期管理。</p>
+            <ul>
+                <li>采用 <code>--onefile</code> 模式编译，提供极致的单文件分发体验。</li>
+                <li>针对 Windows 环境进行了 GUI 优化与图标集成。</li>
+                <li>完全基于云端 Runner 构建，无需本地繁琐的 C++ 编译器配置。</li>
+            </ul>
         </div>
     </div>
 
@@ -101,46 +115,38 @@
         <h2>Technical Focus</h2>
         
         <div class="feature-card">
-            <h3>📦 自动化构建与编译</h3>
-            <p>利用 GitHub Actions 搭建全自动编译流水线，将 Python 源码转化为高性能的独立可执行文件（.exe / .apk）。</p>
+            <h3>🛡️ 代码保护与闭源化</h3>
+            <p>深入研究 Nuitka、Cython 等技术，在保障 Python 开发效率的同时，实现商业级的代码加密与分发安全。</p>
         </div>
 
         <div class="feature-card">
-            <h3>🛡️ 代码保护与闭源分发</h3>
-            <p>通过 Nuitka 编译、代码混淆以及动态链接库（DLL）封装等手段，保护开发者的知识产权。</p>
-        </div>
-
-        <div class="feature-card">
-            <h3>🐧 终端环境适配</h3>
-            <p>熟练处理 Termux 环境下的 Python 依赖编译、权限调用及环境迁移问题。</p>
+            <h3>🐧 跨环境开发</h3>
+            <p>熟练处理移动端 Linux (Termux) 与桌面端 Windows 之间的依赖编译与权限兼容性挑战。</p>
         </div>
     </div>
 
     <div class="section">
         <h2>GitHub Stats</h2>
-        <p>实时同步的开源活动统计：</p>
         <img src="https://github-readme-stats.vercel.app/api?username=afatcat-xie&show_icons=true&theme=dark&bg_color=161b22&title_color=58a6ff&icon_color=58a6ff&text_color=c9d1d9" alt="FatCat's GitHub Stats">
     </div>
 
     <footer>
         <p>© 2026 FatCat. Hosted on GitHub Pages.</p>
-        <p>Status: <code id="status-text">--onefile optimization in progress</code></p>
+        <p>Status: <code id="status-text">Ready to deploy</code></p>
     </footer>
 </div>
 
 <script>
-    // 彩蛋 1：控制台悄悄话
+    // 你的开发者彩蛋
     console.log("%c FatCat OS ", "color: #58a6ff; background: #161b22; font-size: 20px; font-weight: bold;");
     console.log("Checking for icon.ico... %c[FOUND]", "color: #238636");
-    console.log("Running Nuitka with --onefile... %c[SUCCESS]", "color: #238636");
-    console.log("提示：这个页面已经过 Nuitka 混淆（并没有），普通人看不懂你的代码逻辑。");
+    console.log("Nuitka building QQ_quick_update... %c[SUCCESS]", "color: #238636");
 
-    // 彩蛋 2：页面底部动态状态
     const status = document.getElementById('status-text');
     const logs = [
-        "Analyzing dependencies...",
-        "Linking cl.exe (194 files)...",
-        "Stripping symbols...",
+        "Analyzing QQ_quick_update dependencies...",
+        "Calling cl.exe for C compilation...",
+        "Linking --onefile executable...",
         "Build Successful ✓"
     ];
     let i = 0;
