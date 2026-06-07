@@ -84,24 +84,23 @@
 
     <div class="section">
         <h2>关于我</h2>
-        <p>专注于 <b>Windows</b> 桌面应用与 <b>Android Termux</b> 环境下的自动化开发。精通 Python 闭源打包技术（Nuitka/Cython）与跨平台框架（BeeWare/Kivy），致力于构建极致精简、高性能的独立执行程序。</p>
+        <p>专注于 <b>Windows</b> 桌面应用与 <b>Android Termux</b> 环境下的开发。实际上是一个每天被数学题折磨的初中生</p>
         <div style="margin-top: 15px;">
-            <span class="skill-tag">Python 构建系统</span>
+            <span class="skill-tag">Python</span>
             <span class="skill-tag">GitHub Actions CI/CD</span>
-            <span class="skill-tag">二进制混淆技术</span>
-            <span class="skill-tag">系统自动化控制</span>
+            <span class="skill-tag">自动化控制</span>
         </div>
     </div>
 
     <div class="section">
-        <h2>在线游戏：Nuitka 编译挑战</h2>
+        <h2>Nuitka 编译的日常罢了</h2>
         <div id="game-board">
             <div class="game-stats">
-                <span>已编译模块: <span id="score">0</span></span>
-                <span>最高稳定版本: <span id="best">0</span></span>
+                <span>已编译库: <span id="score">0</span></span>
+                <span>今日KPI: <span id="best">0</span></span>
             </div>
             <canvas id="snakeGame" width="400" height="400"></canvas>
-            <button class="btn-action" onclick="resetGame()">重新初始化构建</button>
+            <button class="btn-action" onclick="resetGame()">git init</button>
         </div>
     </div>
 
@@ -109,7 +108,7 @@
         <h2>核心项目</h2>
         <a href="https://github.com/afatcat-xie/QQ_qiuck_update" target="_blank" class="project-link">
             <h3 style="margin: 0; color: var(--accent-color);">🚀 QQ Quick Update</h3>
-            <p style="margin: 10px 0 0 0;">集成 Nuitka 深度混淆与 GitHub Actions 的腾讯 QQ 自动化更新工具。实现单文件分发与跨版本环境自动适配。</p>
+            <p style="margin: 10px 0 0 0;">集成 Nuitka 编译与 GitHub Actions 的腾讯 QQ 自动化刷屏工具。实现单文件分发</p>
         </a>
     </div>
 
@@ -174,7 +173,7 @@
         if(isGodMode) return;
         isGodMode = true;
         body.classList.add('god-mode');
-        statusText.innerText = "超级用户模式 (SUDO)";
+        statusText.innerText = "SUDO";
         console.clear();
         console.log("%c [系统] 权限提升成功：已绕过碰撞检测策略 ", "background: #f1c40f; color: #000; font-weight: bold; font-size: 16px; padding: 10px; border-radius: 5px;");
         console.log("上帝模式开启：蛇身已金构化，支持空间重定向（穿墙）。");
